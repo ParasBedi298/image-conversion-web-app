@@ -1,11 +1,15 @@
-import streamlit
+import streamlit as st
+from PIL import Image
+import io
 from streamlit_image_comparison import image_comparison
 
-def compare_images(uploaded_files, segmented_files):
-    for i in range(len(uploaded_files)):
+def compare_images():
+    for i in range(len(st.session_state.uploaded_files)):
+        image_data = st.session_state.uploaded_files[i].read()
+        input_image = Image.open(io.BytesIO(image_data))
         image_comparison(
-            uploaded_files[i],
-            segmented_files[i],
+            input_image,
+            st.session_state.segmented_files[i],
             label1 = "Original",
             label2 = "Masked"
         )

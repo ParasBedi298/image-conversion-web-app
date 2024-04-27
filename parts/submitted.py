@@ -37,10 +37,12 @@ def submitted_uploads_page():
     with cols[1]:
         st.markdown("<p style='text-align: center;'>Segmentation</p>", unsafe_allow_html=True)
 
+    uploaded_files_copy = [copy.copy(uploaded_file) for uploaded_file in st.session_state.uploaded_files]
+    segmented_files_copy = [copy.copy(segmented_file) for segmented_file in st.session_state.segmented_files]
     for i in range(len(st.session_state.uploaded_files)):
         try:
             with cols[0]:
-                image_data = st.session_state.uploaded_files[i].read()
+                image_data = uploaded_files_copy[i].read()
                 input_image = Image.open(io.BytesIO(image_data))
                 st.image(input_image, use_column_width=True)
         except Exception as e:
@@ -48,10 +50,12 @@ def submitted_uploads_page():
 
         try:
             with cols[1]:
-                mask = st.session_state.segmented_files[i]
+                mask = segmented_files_copy[i]
                 st.image(mask, use_column_width=True)
         except Exception as e:
             st.error(f"Error processing Segmentation Mask: {e}")
+    del uploaded_files_copy
+    del segmented_files_copy
 
 # import streamlit as st
 # from streamlit_image_comparison import image_comparison

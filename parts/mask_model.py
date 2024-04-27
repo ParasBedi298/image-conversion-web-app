@@ -11,9 +11,7 @@ from torch.optim import Adam
 
 
 def load_model(path, device='cpu'): # Check for GPU or CPU
-
-    x = ternausnet.models.UNet11() 
-    model = x
+    model = ternausnet.models.UNet11() 
     # optimizer = Adam(model.parameters(), lr=0.001)
     checkpoint = torch.load(path, map_location=torch.device(device))
     model.load_state_dict(checkpoint['model_state_dict'])
