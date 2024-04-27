@@ -2,10 +2,22 @@ import streamlit as st
 from streamlit_image_comparison import image_comparison
 from PIL import Image
 import io
+import copy
+from parts.mask_model import mask_images
 
-def submitted_uploads_page(files):
+def submitted_uploads_page():
 
-    btn1, btn2, _, _ = st.columns()
+    if "segmented_files" not in st.session_state:
+        st.session_state.segmented_files = None
+        st.rerun()
+
+    model_path = "model/model_2.pth"
+    device = "cpu"
+    uploaded_files_copy = [copy.copy(uploaded_file) for uploaded_file in st.session_state.uploaded_files]
+    st.session_state.segmented_files = mask_images(uploaded_files_copy, model_path, device)
+    del uploaded_files_copy
+
+    btn1, btn2, _, _ = st.columns(4)
     
     if btn1.button("Upload New Files"):
         st.session_state.page = "basic_uploads"
@@ -25,23 +37,21 @@ def submitted_uploads_page(files):
     with cols[1]:
         st.markdown("<p style='text-align: center;'>Segmentation</p>", unsafe_allow_html=True)
 
-    for uploaded_file in files:
+    for i in range(len(st.session_state.uploaded_files)):
         try:
-            # Display original image in the first column
             with cols[0]:
-                image_data = uploaded_file.read()
-                img = Image.open(io.BytesIO(image_data))
-                st.image(img, use_column_width=True)
+                image_data = st.session_state.uploaded_files[i].read()
+                input_image = Image.open(io.BytesIO(image_data))
+                st.image(input_image, use_column_width=True)
         except Exception as e:
-            st.error(f"Error processing {uploaded_file.name}: {e}")
+            st.error(f"Error processing {st.session_state.uploaded_files[i].name}: {e}")
 
         try:
-            # Display masked image in the second column
             with cols[1]:
-                gray = img.convert('L')
-                st.image(gray, use_column_width=True)
+                mask = st.session_state.segmented_files[i]
+                st.image(mask, use_column_width=True)
         except Exception as e:
-            st.error(f"Error processing {gray.name}: {e}")
+            st.error(f"Error processing Segmentation Mask: {e}")
 
 # import streamlit as st
 # from streamlit_image_comparison import image_comparison

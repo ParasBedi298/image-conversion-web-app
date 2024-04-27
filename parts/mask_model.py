@@ -47,12 +47,6 @@ def get_masked_image(uploaded_file, model, device='cpu'): # Check for GPU or CPU
     return output_image
 
 
-# model = load_model('../model/model_2.pth')
-# input_image_path = '../statics/sample_image.png'
-# output_image = get_output_image(input_image_path, model)
-# output_image.save('../statics/masked_sample_image.jpg')
-
-
 def mask_images(uploaded_files, checkpoint_path, device):
     segmented_files = []
     model = load_model(checkpoint_path, device)

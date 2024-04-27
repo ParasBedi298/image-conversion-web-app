@@ -6,6 +6,7 @@ from parts.instructions import instructions_page
 from parts.sideb import sb
 from parts.submitted import submitted_uploads_page
 from parts.compare import compare_images
+import copy
 
 # Page Config
 st.set_page_config(page_title="HistologyNet", page_icon="📋", initial_sidebar_state="expanded")
@@ -52,23 +53,51 @@ def basic_uploads_page():
                     st.error(f"Error processing {uploaded_file.name}:{e}")
 
 def enhance_uploads_page():
-    st.write("That will come from Shashank's code :) But for now just displaying the images as it is")
-
-    cols=st.columns(4)
-    if (st.session_state.uploaded_files):
-        for i,uploaded_file in enumerate(st.session_state.uploaded_files):
-                try:
-                    image_data = uploaded_file.read()
-                    img = Image.open(io.BytesIO(image_data))
-                    cols[i%4].image(img,width=150,caption=uploaded_file.name)
-                    # st.image(img, caption=uploaded_file.name, use_column_width=False)
-                except Exception as e:
-                    st.error(f"Error processing {uploaded_file.name}:{e}")
+    # st.write("That will come from Shashank's code :) But for now just displaying the images as it is")
+    images_uploaded = st.session_state.uploaded_files
+    # images_uploaded=images_uploaded.copy()
+    print(type(images_uploaded))
+    # print(images_uploaded)
+    image_enhance(images_uploaded)
 
     _, _, _, btn2 = st.columns(4)
     if btn2.button("Submit for Segmentation", help = "Click here to submit these images to the model"):
         st.session_state.page = 'submitted_uploads'
         st.rerun()
+
+def image_enhance(images_uploaded):
+    img_map={img.name:copy.copy(img) for img in images_uploaded}
+
+    if images_uploaded:
+        if 'rotation_angles' not in st.session_state:
+            st.session_state.rotation_angles = {name: 0 for name in img_map.keys()}
+
+        if 'edited_images' not in st.session_state:
+            st.session_state.edited_images = {name: 0 for name in img_map.keys()}
+            
+        img_selected=st.selectbox("Chcekbox is here ", options=img_map.keys())
+        
+        image = Image.open(io.BytesIO(img_map[img_selected].read()))
+        # print(type(image))
+
+
+        # if 'rotation_angle' not in st.session_state or st.session_state.selected_image != img_selected:
+        #     st.session_state.rotation_angle = 0
+        #     st.session_state.selected_image = img_selected
+        cropped_image = st_cropper(image)
+        angle = st.slider('Select rotation angle:', -180, 180, st.session_state.rotation_angles[img_selected])
+
+        st.session_state.rotation_angles[img_selected] = angle
+        # print("angle saved to session state")
+        rotated_image = cropped_image.rotate(angle, expand=False)
+        # print("image rotated")
+        st.image(rotated_image, caption="Rotated Image", use_column_width=True)
+
+        # Button to apply edits and store the edited image
+        if st.button('Apply Edits'):
+            # Store the edited image in the session state
+            st.session_state.edited_images[img_selected] = rotated_image
+            st.success("Edits applied and image stored.")
 
 # Side Bar
 sb()
@@ -103,7 +132,7 @@ with tab_upload:
         enhance_uploads_page()
 
     elif st.session_state.page == "submitted_uploads":
-        submitted_uploads_page(st.session_state.uploaded_files)
+        submitted_uploads_page()
 
     elif st.session_state.page == "compare_uploads":
         compare_images()
