@@ -4,6 +4,7 @@ from PIL import Image
 import io
 import copy
 from parts.mask_model import mask_images
+import zipfile
 
 def submitted_uploads_page():
 
@@ -17,7 +18,7 @@ def submitted_uploads_page():
     st.session_state.segmented_files = mask_images(uploaded_files_copy, model_path, device)
     del uploaded_files_copy
 
-    btn1, btn2, _, _ = st.columns(4)
+    btn1, btn2, _, btn3 = st.columns(4)
     
     if btn1.button("Upload New Files"):
         st.session_state.page = "basic_uploads"
@@ -27,6 +28,13 @@ def submitted_uploads_page():
     if btn2.button("Visualize Better"):
         st.session_state.page = "compare_uploads"
         st.rerun()
+
+    with btn3:
+        uploaded_files_copy = [copy.copy(uploaded_file) for uploaded_file in st.session_state.uploaded_files]
+        segmented_files_copy = [copy.copy(segmented_file) for segmented_file in st.session_state.segmented_files]
+        download_images(uploaded_files_copy, segmented_files_copy, st.session_state.names)
+        del uploaded_files_copy
+        del segmented_files_copy
 
     st.write("Segmentation Results: ")
     st.write("")
@@ -59,6 +67,37 @@ def submitted_uploads_page():
             st.error(f"Error processing Segmentation Mask: {e}")
     del uploaded_files_copy
     del segmented_files_copy
+
+
+def download_images(images, masks, names):
+    if st.session_state.edited == False:
+        for i in range(len(images)):
+            image_data = images[i].read()
+            images[i] = Image.open(io.BytesIO(image_data))
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, mode="w", compression=zipfile.ZIP_DEFLATED) as zip_file:
+        for i, image in enumerate(images):
+            file_name=names[i].split('.')[0]
+            image_bytes = io.BytesIO()
+            image.save(image_bytes, format="PNG")
+            image_bytes = image_bytes.getvalue()
+            zip_file.writestr(f"images/{file_name}.png", image_bytes)
+        for i, mask in enumerate(masks):
+            file_name=names[i].split('.')[0]
+            mask_bytes = io.BytesIO()
+            mask.save(mask_bytes, format="PNG")
+            mask_bytes = mask_bytes.getvalue()
+            zip_file.writestr(f"masks/{file_name}_segmented.png", mask_bytes)
+    
+    # zip_buffer.seek(0)
+    
+    # Create a download link for the zip file
+    st.download_button(
+        label="Download Images and Masks",
+        data=zip_buffer,
+        file_name="images_and_masks.zip",
+        mime="application/zip"
+    )
 
 # import streamlit as st
 # from streamlit_image_comparison import image_comparison

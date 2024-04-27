@@ -18,12 +18,16 @@ if 'uploaded_files' not in st.session_state:
 if 'edited' not in st.session_state:
     st.session_state.edited = False
     st.rerun()
+if 'names' not in st.session_state:
+    st.session_state.names = []
+    st.rerun()
 
 # Some Functions
 def basic_uploads_page():
     uploaded_files = st.file_uploader("Upload image(s) for segmentation here:", type=["jpg", "png"], accept_multiple_files=True)
     if uploaded_files:
         st.session_state.uploaded_files = uploaded_files
+        st.session_state.names = [image.name for image in st.session_state.uploaded_files]
     st.text("")
 
     _, _, btn1, btn2 = st.columns(4)
