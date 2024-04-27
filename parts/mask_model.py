@@ -32,7 +32,7 @@ def get_masked_image(uploaded_file, model, device='cpu'): # Check for GPU or CPU
     if input_image.mode != 'RGB':
         input_image = Image.merge("RGB", (input_image, input_image, input_image))
     transform = transforms.Compose([
-        transforms.ToTensor(),
+        transforms.ToTensor(),  # resizing may be needed
     ])
     input_tensor = transform(input_image).unsqueeze(0).to(device)
 

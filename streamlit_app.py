@@ -5,6 +5,7 @@ import io
 from parts.instructions import instructions_page
 from parts.sideb import sb
 from parts.submitted import submitted_uploads_page
+from parts.compare import compare_images
 
 # Page Config
 st.set_page_config(page_title="HistologyNet", page_icon="📋", initial_sidebar_state="expanded")
@@ -24,11 +25,17 @@ def basic_uploads_page():
     _, _, btn1, btn2 = st.columns(4)
 
     if btn1.button("Enhance/Edit Images", help = "Crop/Rotate the input images before segmentation"):
-        st.session_state.page = "enhance_uploads"
-        st.rerun()
+        if st.session_state.uploaded_files is None:
+            st.warning("Please select at least one image file to proceed.")
+        else:
+            st.session_state.page = "enhance_uploads"
+            st.rerun()
     if btn2.button("Submit for Segmentation", help = "Directly submit the images to segmentation model"):
-        st.session_state.page = "submitted_uploads"
-        st.rerun()
+        if st.session_state.uploaded_files is None:
+            st.warning("Please select at least one image file to proceed.")
+        else:
+            st.session_state.page = "submitted_uploads"
+            st.rerun()
 
     st.markdown("***")
     st.write("Uploaded Images:")
@@ -97,5 +104,8 @@ with tab_upload:
 
     elif st.session_state.page == "submitted_uploads":
         submitted_uploads_page(st.session_state.uploaded_files)
+
+    elif st.session_state.page == "compare_uploads":
+        compare_images()
 
     

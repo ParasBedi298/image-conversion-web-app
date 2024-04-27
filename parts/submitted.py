@@ -4,10 +4,16 @@ from PIL import Image
 import io
 
 def submitted_uploads_page(files):
+
+    btn1, btn2, _, _ = st.columns()
     
-    if st.button("Upload New Files"):
+    if btn1.button("Upload New Files"):
         st.session_state.page = "basic_uploads"
         st.session_state.uploaded_files = None
+        st.rerun()
+
+    if btn2.button("Visualize Better"):
+        st.session_state.page = "compare_uploads"
         st.rerun()
 
     st.write("Segmentation Results: ")
