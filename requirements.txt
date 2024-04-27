@@ -1,2 +1,11 @@
+streamlit
+PIL
+io
+copy
+ternausnet
+numpy
+torch
+matplotlib
+torchvision
 streamlit_cropper
 streamlit_image_comparison
