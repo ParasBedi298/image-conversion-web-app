@@ -9,6 +9,6 @@ def sb():
     with col3:
         st.write("")
 
-    st.sidebar.markdown(" ## About HistologyNet")
-    st.sidebar.markdown("Bla-bla-bla: Revolutionize biomedical image segmentation by harnessing the power of self-supervised learning. A self-supervised learning model for efficient binary segmentation of histology images, without the need for extensive manual annotation"  )              
-    st.sidebar.info("Read more about how the model works and see the code on [Github](https://github.com).", icon="ℹ️")
+    st.sidebar.markdown(" ## About HistologyNet")    
+    st.sidebar.markdown("We've trained a model that achieves binary segmentation of histology images. Our model is self-supervised and makes use of unlabelled images, without the need for extensive manual annotation. To see the custom results for your images, head over to the uploads section!")           
+    st.sidebar.info("Our code for segmentation as well as webpage is available on [Github](https://github.com/ParasBedi298/image-conversion-web-app.git).", icon="ℹ️")
