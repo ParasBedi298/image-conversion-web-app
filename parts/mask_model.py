@@ -6,13 +6,17 @@ from PIL import Image
 import io
 
 import torch
+# from torch import nn
 from torchvision import transforms
+from torch.optim import Adam
 
 
 def load_model(path, device='cpu'): # Check for GPU or CPU
     model = ternausnet.models.UNet11() 
+    # optimizer = Adam(model.parameters(), lr=0.001)
     checkpoint = torch.load(path, map_location=torch.device(device))
     model.load_state_dict(checkpoint['model_state_dict'])
+    # optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 
     model = model.to(device)
 
@@ -29,7 +33,7 @@ def get_masked_image(uploaded_file, model, device='cpu'): # Check for GPU or CPU
         input_image = Image.merge("RGB", (input_image, input_image, input_image))
     transform = transforms.Compose([
         transforms.Resize((256, 256)),
-        transforms.ToTensor()
+        transforms.ToTensor()  # resizing may be needed
     ])
     input_tensor = transform(input_image).unsqueeze(0).to(device)
 

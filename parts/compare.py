@@ -14,6 +14,5 @@ def compare_images():
             input_image,
             st.session_state.segmented_files[i],
             label1 = "Original",
-            label2 = "Masked",
-            width = 450
+            label2 = "Masked"
         )
