@@ -60,8 +60,11 @@ def enhance_uploads_page():
     # print(images_uploaded)
     image_enhance(images_uploaded)
 
-    _, _, _, btn2 = st.columns(4)
-    if btn2.button("Submit for Segmentation", help = "Click here to submit these images to the model"):
+    _, _, btn1, btn2 = st.columns(4)
+    if btn1.button("Go Back", help = "Click to go back to file uploads page"):
+        st.session_state.page = 'basic_uploads'
+        st.rerun()
+    if btn2.button("Submit", help = "Click here to submit these images to the model"):  
         st.session_state.page = 'submitted_uploads'
         st.rerun()
 
