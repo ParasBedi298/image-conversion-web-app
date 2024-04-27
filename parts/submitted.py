@@ -12,7 +12,7 @@ def submitted_uploads_page():
         st.session_state.segmented_files = None
         st.rerun()
 
-    model_path = "model/model_2.pth"
+    model_path = "model/model_try2_14.pth"
     device = "cpu"
     uploaded_files_copy = [copy.copy(uploaded_file) for uploaded_file in st.session_state.uploaded_files]
     st.session_state.segmented_files = mask_images(uploaded_files_copy, model_path, device)
@@ -89,7 +89,7 @@ def download_images(images, masks, names):
             mask_bytes = mask_bytes.getvalue()
             zip_file.writestr(f"masks/{file_name}_segmented.png", mask_bytes)
     
-    # zip_buffer.seek(0)
+    zip_buffer.seek(0)
     
     # Create a download link for the zip file
     st.download_button(
@@ -154,6 +154,5 @@ def download_images(images, masks, names):
 #     if uploaded_files and segmented_files:
 #         final_display(uploaded_files, segmented_files)
 
-# if __name__ == '__main__':
+# if _name_ == '_main_':
 #     main()
-        
