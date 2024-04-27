@@ -11,12 +11,13 @@ from torch.optim import Adam
 
 
 def load_model(path, device='cpu'): # Check for GPU or CPU
-    x = ternausnet.models.UNet11(pretrained=True) 
+
+    x = ternausnet.models.UNet11() 
     model = x
-    optimizer = Adam(model.parameters(), lr=0.001)
+    # optimizer = Adam(model.parameters(), lr=0.001)
     checkpoint = torch.load(path, map_location=torch.device(device))
     model.load_state_dict(checkpoint['model_state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    # optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 
     model = model.to(device)
 
