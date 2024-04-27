@@ -13,13 +13,11 @@ def submitted_uploads_page(files):
     st.write("Segmentation Results: ")
     st.write("")
 
-    cols = st.columns(3)
+    cols = st.columns(2)
     with cols[0]:
         st.markdown("<p style='text-align: center;'>Original Image</p>", unsafe_allow_html=True)
     with cols[1]:
         st.markdown("<p style='text-align: center;'>Segmentation</p>", unsafe_allow_html=True)
-    with cols[2]:
-        st.markdown("<p style='text-align: center;'>Comparison</p>", unsafe_allow_html=True)
 
     for uploaded_file in files:
         try:
@@ -38,18 +36,6 @@ def submitted_uploads_page(files):
                 st.image(gray, use_column_width=True)
         except Exception as e:
             st.error(f"Error processing {gray.name}: {e}")
-
-        # Display image comparison in the third column
-        with cols[2]:
-            # Resize original and masked images to a fixed size for comparison
-            image_comparison(
-                img1=img,
-                img2=gray,
-                label1="Original",
-                label2="Masked",
-                width=225
-            )
-
 
 # import streamlit as st
 # from streamlit_image_comparison import image_comparison
