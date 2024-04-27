@@ -1,19 +1,22 @@
 import streamlit as st
 
 def instructions_page():
-    st.markdown("- Item 1")
-    st.markdown("- Item 2")
-    st.markdown("- Item 3")
+    st.markdown("1. Use the **Upload** tab for giving input histology images for segmentation. It is also possible to input multiple images at once.")
+    st.markdown("2. After uploading, you can optionally choose to **Edit/Enhance Images** to crop/rotate your input, or directly **Submit for Segmentation**.")
+    st.markdown("3. The model will now generate the segmentation masks. To directly compare the masked images to your input, use the option **Visualize Better**.")
 
-    # Apply CSS to indent the bullet points
     st.markdown('''
         <style>
-            [data-testid="stMarkdownContainer"] ul {
+            [data-testid="stMarkdownContainer"] ol {
                 list-style-position: inside;
             }
         </style>
     ''', unsafe_allow_html=True)
 
-    st.success('''**A Brief Note:**  
-
-    Anything else we might wanna tell''')
+    message = (
+    '''Explore the **Visualize Better** option: 
+    
+    This is a feature that facilitates side-by-side comparison of images, 
+    by overlaying the masked image over the input image. Use this for an 
+    intuitive way to discern subtle differences and similarities.''')
+    st.success(message)
