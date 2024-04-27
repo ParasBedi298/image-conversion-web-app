@@ -11,7 +11,7 @@ def submitted_uploads_page():
         st.session_state.segmented_files = None
         st.rerun()
 
-    model_path = "model/model_2.pth"
+    model_path = "model/model_try2_14.pth"
     device = "cpu"
     uploaded_files_copy = [copy.copy(uploaded_file) for uploaded_file in st.session_state.uploaded_files]
     st.session_state.segmented_files = mask_images(uploaded_files_copy, model_path, device)
