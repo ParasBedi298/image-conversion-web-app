@@ -15,6 +15,9 @@ st.set_page_config(page_title="HistologyNet", page_icon="📋", initial_sidebar_
 if 'uploaded_files' not in st.session_state:
     st.session_state.uploaded_files = None
     st.rerun()
+if 'edited' not in st.session_state:
+    st.session_state.edited = False
+    st.rerun()
 
 # Some Functions
 def basic_uploads_page():
@@ -65,6 +68,14 @@ def enhance_uploads_page():
         st.session_state.page = 'basic_uploads'
         st.rerun()
     if btn2.button("Submit", help = "Click here to submit these images to the model"):  
+        if (st.session_state.edited == True):
+            uploaded_files_copy = [copy.copy(uploaded_file) for uploaded_file in st.session_state.uploaded_files]
+            for i in range(len(uploaded_files_copy)):
+                if uploaded_files_copy[i].name in st.session_state.edited_images:
+                    st.session_state.uploaded_files[i] = st.session_state.edited_images[uploaded_files_copy[i].name]
+                else:
+                    image_data = uploaded_files_copy[i].read()
+                    st.session_state.uploaded_files[i] = Image.open(io.BytesIO(image_data))
         st.session_state.page = 'submitted_uploads'
         st.rerun()
 
@@ -72,12 +83,12 @@ def image_enhance(images_uploaded):
     img_map={img.name:copy.copy(img) for img in images_uploaded}
 
     if images_uploaded:
-        if 'rotation_angles' not in st.session_state:
-            st.session_state.rotation_angles = {name: 0 for name in img_map.keys()}
-
+        # if 'rotation_angles' not in st.session_state:
+        #     st.session_state.rotation_angles = {name: 0 for name in img_map.keys()}
         if 'edited_images' not in st.session_state:
             st.session_state.edited_images = {name: 0 for name in img_map.keys()}
-            
+        
+        rotation_angles = {name: 0 for name in img_map.keys()}
         img_selected=st.selectbox("Chcekbox is here ", options=img_map.keys())
         
         image = Image.open(io.BytesIO(img_map[img_selected].read()))
@@ -88,9 +99,9 @@ def image_enhance(images_uploaded):
         #     st.session_state.rotation_angle = 0
         #     st.session_state.selected_image = img_selected
         cropped_image = st_cropper(image)
-        angle = st.slider('Select rotation angle:', -180, 180, st.session_state.rotation_angles[img_selected])
+        angle = st.slider('Select rotation angle:', -180, 180, rotation_angles[img_selected])
 
-        st.session_state.rotation_angles[img_selected] = angle
+        rotation_angles[img_selected] = angle
         # print("angle saved to session state")
         rotated_image = cropped_image.rotate(angle, expand=False)
         # print("image rotated")
@@ -101,6 +112,7 @@ def image_enhance(images_uploaded):
             # Store the edited image in the session state
             st.session_state.edited_images[img_selected] = rotated_image
             st.success("Edits applied and image stored.")
+            st.session_state.edited = True
 
 # Side Bar
 sb()

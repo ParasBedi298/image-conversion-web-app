@@ -42,8 +42,11 @@ def submitted_uploads_page():
     for i in range(len(st.session_state.uploaded_files)):
         try:
             with cols[0]:
-                image_data = uploaded_files_copy[i].read()
-                input_image = Image.open(io.BytesIO(image_data))
+                if st.session_state.edited == False:
+                    image_data = uploaded_files_copy[i].read()
+                    input_image = Image.open(io.BytesIO(image_data))
+                else:
+                    input_image = uploaded_files_copy[i]
                 st.image(input_image, use_column_width=True)
         except Exception as e:
             st.error(f"Error processing {st.session_state.uploaded_files[i].name}: {e}")

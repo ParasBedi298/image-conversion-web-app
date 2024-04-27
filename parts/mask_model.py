@@ -1,5 +1,6 @@
 import ternausnet
 import ternausnet.models
+import streamlit as st
 import numpy as np
 from PIL import Image
 import io
@@ -23,12 +24,16 @@ def load_model(path, device='cpu'): # Check for GPU or CPU
 
 
 def get_masked_image(uploaded_file, model, device='cpu'): # Check for GPU or CPU
-    image_data = uploaded_file.read()
-    input_image = Image.open(io.BytesIO(image_data))
+    if st.session_state.edited == False:
+        image_data = uploaded_file.read()
+        input_image = Image.open(io.BytesIO(image_data))
+    else:
+        input_image = uploaded_file
     if input_image.mode != 'RGB':
         input_image = Image.merge("RGB", (input_image, input_image, input_image))
     transform = transforms.Compose([
-        transforms.ToTensor(),  # resizing may be needed
+        transforms.Resize((256, 256)),
+        transforms.ToTensor()  # resizing may be needed
     ])
     input_tensor = transform(input_image).unsqueeze(0).to(device)
 
